@@ -82,7 +82,10 @@ namespace AlgorithmSharp.Structures
             [DebuggerStepThrough]
             public DsuNode GetRoot()
             {
-                return Parent == null || Parent == this ? this : Parent = Parent.GetRoot();
+                var node = this;
+                while (node.Parent != null && node.Parent != node)
+                    node = node.Parent;
+                return node;
             }
         }
     }
