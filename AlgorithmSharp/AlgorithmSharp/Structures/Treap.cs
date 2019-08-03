@@ -7,21 +7,43 @@ using AlgorithmSharp.Utils;
 
 namespace AlgorithmSharp.Structures
 {
-    public class Treap<TKey, TValue> : IDictionary<TKey, TValue>
+    public class Treap<TKey, TValue, TData> : IDictionary<TKey, TValue>
         where TKey : IComparable<TKey>
     {
-        private TreapNode<TKey, TValue> root;
+        private readonly Func<TValue, TData> dataBuildingOperation;
+        private readonly AssociativeOperation<TData> dataCombiningOperation;
+        private TreapNode<TKey, TValue, TData> root;
 
-        public Treap() => root = null;
 
-        public Treap(TKey element, TValue value) => root = new TreapNode<TKey, TValue>(element, value);
+        public Treap(AssociativeOperation<TData> dataCombiningOperation = null,
+            Func<TValue, TData> dataBuildingOperation = null)
+        {
+            this.dataCombiningOperation = dataCombiningOperation;
+            this.dataBuildingOperation = dataBuildingOperation;
+            root = null;
+        }
 
-        public Treap(IEnumerable<KeyValuePair<TKey, TValue>> elements) : this(elements.ToList())
+        public Treap(TKey element, TValue value, AssociativeOperation<TData> dataCombiningOperation = null,
+            Func<TValue, TData> dataBuildingOperation = null)
+        {
+            this.dataCombiningOperation = dataCombiningOperation;
+            this.dataBuildingOperation = dataBuildingOperation;
+            root = new TreapNode<TKey, TValue, TData>(element, value, dataCombiningOperation, dataBuildingOperation);
+        }
+
+        public Treap(IEnumerable<KeyValuePair<TKey, TValue>> elements,
+            AssociativeOperation<TData> dataCombiningOperation = null, Func<TValue, TData> dataBuildingOperation = null)
+            : this(elements.ToList(), dataCombiningOperation, dataBuildingOperation)
         {
         }
 
-        public Treap(IList<KeyValuePair<TKey, TValue>> elements) =>
+        public Treap(IList<KeyValuePair<TKey, TValue>> elements,
+            AssociativeOperation<TData> dataCombiningOperation = null, Func<TValue, TData> dataBuildingOperation = null)
+        {
+            this.dataCombiningOperation = dataCombiningOperation;
+            this.dataBuildingOperation = dataBuildingOperation;
             root = BuildFromlist(elements, 0, elements.Count - 1);
+        }
 
         public IEnumerable<TKey> Keys => new Enumerable<TKey>(GetKeysEnumerator());
 
@@ -99,13 +121,15 @@ namespace AlgorithmSharp.Structures
             return true;
         }
 
-        private static TreapNode<TKey, TValue> BuildFromlist(IList<KeyValuePair<TKey, TValue>> elements, int left,
+        private TreapNode<TKey, TValue, TData> BuildFromlist(IList<KeyValuePair<TKey, TValue>> elements, int left,
             int right)
         {
             if (left == right)
-                return new TreapNode<TKey, TValue>(elements[left].Key, elements[left].Value);
+                return new TreapNode<TKey, TValue, TData>(elements[left].Key, elements[left].Value,
+                    dataCombiningOperation, dataBuildingOperation);
             var mid = (left + right) / 2;
-            var node = new TreapNode<TKey, TValue>(elements[mid].Key, elements[mid].Value)
+            var node = new TreapNode<TKey, TValue, TData>(elements[mid].Key, elements[mid].Value,
+                dataCombiningOperation, dataBuildingOperation)
             {
                 Left = BuildFromlist(elements, left, mid - 1),
                 Right = BuildFromlist(elements, mid + 1, right)
@@ -114,9 +138,9 @@ namespace AlgorithmSharp.Structures
             return node;
         }
 
-        private IEnumerator<TreapNode<TKey, TValue>> GetNodesEnumerator()
+        private IEnumerator<TreapNode<TKey, TValue, TData>> GetNodesEnumerator()
         {
-            var nodes = new Stack<TreapNode<TKey, TValue>>();
+            var nodes = new Stack<TreapNode<TKey, TValue, TData>>();
             var curr = root;
             while (true)
             {
@@ -153,33 +177,35 @@ namespace AlgorithmSharp.Structures
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static Treap<TKey, TValue> Merge(Treap<TKey, TValue> leftTreap, Treap<TKey, TValue> rightTreap) =>
-            new Treap<TKey, TValue> {root = Merge(leftTreap.root, rightTreap.root)};
+        public static Treap<TKey, TValue, TData> Merge(Treap<TKey, TValue, TData> leftTreap,
+            Treap<TKey, TValue, TData> rightTreap) =>
+            new Treap<TKey, TValue, TData> {root = Merge(leftTreap.root, rightTreap.root)};
 
-        private static TreapNode<TKey, TValue> Merge(TreapNode<TKey, TValue> left, TreapNode<TKey, TValue> right)
+        private static TreapNode<TKey, TValue, TData> Merge(TreapNode<TKey, TValue, TData> left,
+            TreapNode<TKey, TValue, TData> right)
         {
             if (left == null) return right;
             if (right == null) return left;
             if (left.Priority > right.Priority)
             {
                 left.Right = Merge(left.Right, right);
-                left.UpadteCount();
                 return left;
             }
 
             right.Left = Merge(left, right.Left);
-            right.UpadteCount();
             return right;
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public (Treap<TKey, TValue>, Treap<TKey, TValue>) Split(TKey element)
+        public (Treap<TKey, TValue, TData>, Treap<TKey, TValue, TData>) Split(TKey element)
         {
             var result = Split(root, element);
-            return (new Treap<TKey, TValue> {root = result.Item1}, new Treap<TKey, TValue> {root = result.Item2});
+            return (new Treap<TKey, TValue, TData> {root = result.Item1},
+                new Treap<TKey, TValue, TData> {root = result.Item2});
         }
 
-        private static (TreapNode<TKey, TValue>, TreapNode<TKey, TValue>) Split(TreapNode<TKey, TValue> treapNode,
+        private static (TreapNode<TKey, TValue, TData>, TreapNode<TKey, TValue, TData>) Split(
+            TreapNode<TKey, TValue, TData> treapNode,
             TKey element)
         {
             if (treapNode == null)
@@ -190,7 +216,6 @@ namespace AlgorithmSharp.Structures
                 treapNode.Right = null;
                 var rightSplit = Split(rightTree, element);
                 treapNode.Right = rightSplit.Item1;
-                treapNode.UpadteCount();
                 return (treapNode, rightSplit.Item2);
             }
 
@@ -198,19 +223,19 @@ namespace AlgorithmSharp.Structures
             treapNode.Left = null;
             var leftSplit = Split(leftTree, element);
             treapNode.Left = leftSplit.Item2;
-            treapNode.UpadteCount();
             return (leftSplit.Item1, treapNode);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public (Treap<TKey, TValue>, Treap<TKey, TValue>) SplitWithEqual(TKey element)
+        public (Treap<TKey, TValue, TData>, Treap<TKey, TValue, TData>) SplitWithEqual(TKey element)
         {
             var result = SplitWithEqual(root, element);
-            return (new Treap<TKey, TValue> {root = result.Item1}, new Treap<TKey, TValue> {root = result.Item2});
+            return (new Treap<TKey, TValue, TData> {root = result.Item1},
+                new Treap<TKey, TValue, TData> {root = result.Item2});
         }
 
-        private static (TreapNode<TKey, TValue>, TreapNode<TKey, TValue>) SplitWithEqual(
-            TreapNode<TKey, TValue> treapNode, TKey element)
+        private static (TreapNode<TKey, TValue, TData>, TreapNode<TKey, TValue, TData>) SplitWithEqual(
+            TreapNode<TKey, TValue, TData> treapNode, TKey element)
         {
             if (treapNode == null)
                 return (null, null);
@@ -220,7 +245,6 @@ namespace AlgorithmSharp.Structures
                 treapNode.Right = null;
                 var rightSplit = Split(rightTree, element);
                 treapNode.Right = rightSplit.Item1;
-                treapNode.UpadteCount();
                 return (treapNode, rightSplit.Item2);
             }
 
@@ -228,16 +252,16 @@ namespace AlgorithmSharp.Structures
             treapNode.Left = null;
             var leftSplit = Split(leftTree, element);
             treapNode.Left = leftSplit.Item2;
-            treapNode.UpadteCount();
             return (leftSplit.Item1, treapNode);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void Insert(TKey element, TValue value) =>
-            root = Insert(root, new TreapNode<TKey, TValue>(element, value));
+            root = Insert(root,
+                new TreapNode<TKey, TValue, TData>(element, value, dataCombiningOperation, dataBuildingOperation));
 
-        private static TreapNode<TKey, TValue> Insert(TreapNode<TKey, TValue> treapNode,
-            TreapNode<TKey, TValue> inserting)
+        private static TreapNode<TKey, TValue, TData> Insert(TreapNode<TKey, TValue, TData> treapNode,
+            TreapNode<TKey, TValue, TData> inserting)
         {
             if (treapNode == null) return inserting;
             if (inserting.Priority < treapNode.Priority)
@@ -248,18 +272,22 @@ namespace AlgorithmSharp.Structures
                     treapNode.Right = Insert(treapNode.Right, inserting);
                 else
                     treapNode.Left = Insert(treapNode.Left, inserting);
-                treapNode.UpadteCount();
                 return treapNode;
             }
 
             var splitResult = Split(treapNode, inserting.Key);
             inserting.Left = splitResult.Item1;
             inserting.Right = splitResult.Item2;
-            inserting.UpadteCount();
             return inserting;
         }
 
-        private static TreapNode<TKey, TValue> Find(TreapNode<TKey, TValue> treapNode, TKey key)
+        public (TValue, TData) Find(TKey key)
+        {
+            var node = Find(root, key);
+            return (node.Value, node.NodeData);
+        }
+
+        private static TreapNode<TKey, TValue, TData> Find(TreapNode<TKey, TValue, TData> treapNode, TKey key)
         {
             while (true)
             {
@@ -273,7 +301,7 @@ namespace AlgorithmSharp.Structures
         public void Erase(TKey element) =>
             root = Erase(root, element);
 
-        private static TreapNode<TKey, TValue> Erase(TreapNode<TKey, TValue> treapNode, TKey element)
+        private static TreapNode<TKey, TValue, TData> Erase(TreapNode<TKey, TValue, TData> treapNode, TKey element)
         {
             if (treapNode == null) return null;
             if (treapNode.Key.CompareTo(element) == 0)
@@ -282,22 +310,24 @@ namespace AlgorithmSharp.Structures
                 treapNode.Right = Erase(treapNode.Right, element);
             else
                 treapNode.Left = Erase(treapNode.Left, element);
-            treapNode.UpadteCount();
             return treapNode;
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static Treap<TKey, TValue> Union(Treap<TKey, TValue> treap1, Treap<TKey, TValue> treap2) =>
-            new Treap<TKey, TValue> {root = Union(treap1.root, treap2.root)};
+        public static Treap<TKey, TValue, TData> Union(Treap<TKey, TValue, TData> treap1,
+            Treap<TKey, TValue, TData> treap2) =>
+            new Treap<TKey, TValue, TData> {root = Union(treap1.root, treap2.root)};
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static Treap<TKey, TValue> Union(IEnumerable<Treap<TKey, TValue>> treaps) =>
-            new Treap<TKey, TValue> {root = Union(treaps.Select(x => x.root))};
+        public static Treap<TKey, TValue, TData> Union(IEnumerable<Treap<TKey, TValue, TData>> treaps) =>
+            new Treap<TKey, TValue, TData> {root = Union(treaps.Select(x => x.root))};
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static Treap<TKey, TValue> Union(params Treap<TKey, TValue>[] treaps) => Union(treaps.AsEnumerable());
+        public static Treap<TKey, TValue, TData> Union(params Treap<TKey, TValue, TData>[] treaps) =>
+            Union(treaps.AsEnumerable());
 
-        private static TreapNode<TKey, TValue> Union(TreapNode<TKey, TValue> left, TreapNode<TKey, TValue> right)
+        private static TreapNode<TKey, TValue, TData> Union(TreapNode<TKey, TValue, TData> left,
+            TreapNode<TKey, TValue, TData> right)
         {
             if (left == null) return right;
             if (right == null) return left;
@@ -306,7 +336,6 @@ namespace AlgorithmSharp.Structures
                 var splitResult = Split(right, left.Key);
                 left.Left = Merge(left.Left, splitResult.Item1);
                 left.Right = Merge(left.Right, splitResult.Item2);
-                left.UpadteCount();
                 return left;
             }
             else
@@ -314,20 +343,19 @@ namespace AlgorithmSharp.Structures
                 var splitResult = Split(left, right.Key);
                 right.Left = Merge(right.Left, splitResult.Item1);
                 right.Right = Merge(right.Right, splitResult.Item2);
-                right.UpadteCount();
                 return right;
             }
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private static TreapNode<TKey, TValue> Union(IEnumerable<TreapNode<TKey, TValue>> treapNodes) =>
+        private static TreapNode<TKey, TValue, TData> Union(IEnumerable<TreapNode<TKey, TValue, TData>> treapNodes) =>
             treapNodes.Aggregate(Union);
 
-        private static TreapNode<TKey, TValue> SiftDown(TreapNode<TKey, TValue> treapNode)
+        private static void SiftDown(TreapNode<TKey, TValue, TData> treapNode)
         {
             while (true)
             {
-                if (treapNode == null) return null;
+                if (treapNode == null) return;
                 var maxPriority = treapNode;
                 if (treapNode.Left != null && treapNode.Left.Priority > maxPriority.Priority)
                     maxPriority = treapNode.Left;
@@ -344,34 +372,77 @@ namespace AlgorithmSharp.Structures
 
                 break;
             }
-
-            return treapNode;
         }
 
-        private class TreapNode<TNodeKey, TNodeValue>
+
+        private class TreapNode<TNodeKey, TNodeValue, TNodeData>
         {
             // ReSharper disable once StaticMemberInGenericType
             private static readonly Random rng = new Random();
+            private readonly Func<TNodeValue, TNodeData> dataBuildingOperation;
+            private readonly AssociativeOperation<TNodeData> dataCombiningOperation;
             public readonly TNodeKey Key;
             public int Count;
-            public TreapNode<TNodeKey, TNodeValue> Left, Right;
-            public int Priority;
 
-            public TreapNode(TNodeKey key, TNodeValue value)
+            private TreapNode<TNodeKey, TNodeValue, TNodeData> left;
+            public int Priority;
+            private TreapNode<TNodeKey, TNodeValue, TNodeData> right;
+            private TNodeValue value;
+
+            public TreapNode(TNodeKey key, TNodeValue value, AssociativeOperation<TNodeData> dataCombiningOperation,
+                Func<TNodeValue, TNodeData> dataBuildingOperation)
             {
                 Key = key;
                 Value = value;
+                this.dataCombiningOperation = dataCombiningOperation;
+                this.dataBuildingOperation = dataBuildingOperation;
                 Count = 1;
                 Priority = rng.Next();
+                NodeData = dataBuildingOperation == null ? default(TNodeData) : dataBuildingOperation.Invoke(Value);
             }
 
-            public TNodeValue Value { get; set; }
-
-            [MethodImpl(MethodImplOptions.AggressiveInlining)]
-            public void UpadteCount()
+            public TNodeValue Value
             {
-                Count = Left?.Count ?? 0 + Right?.Count ?? 0;
+                [MethodImpl(MethodImplOptions.AggressiveInlining)]
+                get => value;
+                [MethodImpl(MethodImplOptions.AggressiveInlining)]
+                set
+                {
+                    this.value = value;
+                    NodeData = dataCombiningOperation(left.NodeData,
+                        dataCombiningOperation(dataBuildingOperation(this.value), right.NodeData));
+                }
             }
+
+            public TreapNode<TNodeKey, TNodeValue, TNodeData> Left
+            {
+                [MethodImpl(MethodImplOptions.AggressiveInlining)]
+                get => left;
+                [MethodImpl(MethodImplOptions.AggressiveInlining)]
+                set
+                {
+                    left = value;
+                    Count = left.Count + right.Count + 1;
+                    NodeData = dataCombiningOperation(left.NodeData,
+                        dataCombiningOperation(dataBuildingOperation(Value), right.NodeData));
+                }
+            }
+
+            public TreapNode<TNodeKey, TNodeValue, TNodeData> Right
+            {
+                [MethodImpl(MethodImplOptions.AggressiveInlining)]
+                get => right;
+                [MethodImpl(MethodImplOptions.AggressiveInlining)]
+                set
+                {
+                    right = value;
+                    Count = left.Count + right.Count + 1;
+                    NodeData = dataCombiningOperation(left.NodeData,
+                        dataCombiningOperation(dataBuildingOperation(Value), right.NodeData));
+                }
+            }
+
+            public TNodeData NodeData { get; private set; }
         }
     }
 }
