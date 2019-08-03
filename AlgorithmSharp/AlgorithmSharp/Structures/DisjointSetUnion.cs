@@ -53,6 +53,7 @@ namespace AlgorithmSharp.Structures
         {
             if (!CompareSets(element1, element2))
                 NumberOfSets--;
+            nodes[element1].GetRoot().SetSize += nodes[element2].GetRoot().SetSize;
             nodes[element2].GetRoot().Parent = nodes[element1].GetRoot();
         }
 
@@ -78,6 +79,7 @@ namespace AlgorithmSharp.Structures
         private class DsuNode
         {
             public DsuNode Parent;
+            public int SetSize = 1;
 
             [DebuggerStepThrough]
             public DsuNode GetRoot()
