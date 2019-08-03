@@ -392,6 +392,9 @@ namespace AlgorithmSharp.Structures
             public TreapNode(TNodeKey key, TNodeValue value, AssociativeOperation<TNodeData> dataCombiningOperation,
                 Func<TNodeValue, TNodeData> dataBuildingOperation)
             {
+                if (dataCombiningOperation != null && dataBuildingOperation == null)
+                    throw new ArgumentException("Data should be combineable if it is buildable",
+                        nameof(dataBuildingOperation));
                 Key = key;
                 Value = value;
                 this.dataCombiningOperation = dataCombiningOperation;
@@ -409,8 +412,10 @@ namespace AlgorithmSharp.Structures
                 set
                 {
                     this.value = value;
-                    NodeData = dataCombiningOperation(left.NodeData,
-                        dataCombiningOperation(dataBuildingOperation(this.value), right.NodeData));
+                    NodeData = dataCombiningOperation == null
+                        ? default(TNodeData)
+                        : dataCombiningOperation(left.NodeData,
+                            dataCombiningOperation(dataBuildingOperation(this.value), right.NodeData));
                 }
             }
 
@@ -423,8 +428,10 @@ namespace AlgorithmSharp.Structures
                 {
                     left = value;
                     Count = left.Count + right.Count + 1;
-                    NodeData = dataCombiningOperation(left.NodeData,
-                        dataCombiningOperation(dataBuildingOperation(Value), right.NodeData));
+                    NodeData = dataCombiningOperation == null
+                        ? default(TNodeData)
+                        : dataCombiningOperation(left.NodeData,
+                            dataCombiningOperation(dataBuildingOperation(Value), right.NodeData));
                 }
             }
 
@@ -437,8 +444,10 @@ namespace AlgorithmSharp.Structures
                 {
                     right = value;
                     Count = left.Count + right.Count + 1;
-                    NodeData = dataCombiningOperation(left.NodeData,
-                        dataCombiningOperation(dataBuildingOperation(Value), right.NodeData));
+                    NodeData = dataCombiningOperation == null
+                        ? default(TNodeData)
+                        : dataCombiningOperation(left.NodeData,
+                            dataCombiningOperation(dataBuildingOperation(Value), right.NodeData));
                 }
             }
 
