@@ -130,12 +130,34 @@ namespace AlgorithmSharp.Structures
         {
             if (this == EmptyStack)
             {
-                result = default(T);
+                result = default;
                 return false;
             }
             else
             {
                 result = value;
+                return true;
+            }
+        }
+
+        /// <summary>
+        /// Returns a value that indicates whether there is an object at the top of the <see cref="PersistentStack{T}"/>, and if one is present, copies it to the <paramref name="result"/> parameter, and removes it from the <see cref="PersistentStack{T}"/>.
+        /// </summary>
+        /// <param name="result">If present, the object at the top of the <see cref="PersistentStack{T}"/>; otherwise, the default value of <typeparamref name="T"/>.</param>
+        /// <param name="newVersion">The modified version of <see cref="PersistentStack{T}"/></param>
+        /// <returns><c>true</c> if there is an object at the top of the <see cref="PersistentStack{T}"/>; <c>false</c> if the <see cref="PersistentStack{T}"/> is empty.</returns>
+        public bool TryPop(out T result, out PersistentStack<T> newVersion)
+        {
+            if (this == EmptyStack)
+            {
+                result = default;
+                newVersion = this;
+                return false;
+            }
+            else
+            {
+                result = value;
+                newVersion = popTo;
                 return true;
             }
         }
