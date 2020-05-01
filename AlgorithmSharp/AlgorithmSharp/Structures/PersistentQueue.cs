@@ -108,8 +108,16 @@ namespace AlgorithmSharp.Structures
             return false;
         }
 
+        /// <summary>
+        /// Removes and returns the object at the beginning of the <see cref="PersistentQueue{T}"/>.
+        /// </summary>
+        /// <param name="newVersion">The modified version of <see cref="PersistentQueue{T}"/></param>
+        /// <returns>The object that is removed from the beginning of the <see cref="PersistentQueue{T}"/>.</returns>
+        /// <exception cref="InvalidOperationException">The <see cref="PersistentQueue{T}"/> is empty.</exception>
         public T Dequeue(out PersistentQueue<T> newVersion)
         {
+            if (Count == 0)
+                throw new InvalidOperationException();
             if (!reCopy)
             {
                 PersistentStack<T> rn;
@@ -134,6 +142,11 @@ namespace AlgorithmSharp.Structures
             }
         }
 
+        /// <summary>
+        /// Adds an object to the end of the <see cref="PersistentQueue{T}"/>.
+        /// </summary>
+        /// <param name="item">The object to add to the <see cref="PersistentQueue{T}"/>. The value can be <c>null</c> for reference types.</param>
+        /// <param name="newVersion">The modified version of <see cref="PersistentQueue{T}"/></param>
         public void Enqueue(T item, out PersistentQueue<T> newVersion)
         {
             if (!reCopy)
