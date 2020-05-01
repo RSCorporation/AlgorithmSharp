@@ -8,7 +8,7 @@ using System.Text;
 
 namespace AlgorithmSharp.Structures
 {
-    class PersistentStack<T> : IEnumerable<T>, IReadOnlyCollection<T>, ICollection, IEnumerable
+    public class PersistentStack<T> : IEnumerable<T>, IReadOnlyCollection<T>, ICollection, IEnumerable
     {
         private T value;
         private PersistentStack<T> popTo;
@@ -63,7 +63,7 @@ namespace AlgorithmSharp.Structures
         public void CopyTo(Array array, int index)
         {
             var curr = this;
-            while (curr != null)
+            while (curr != EmptyStack)
             {
                 array.SetValue(curr.value, index);
                 index++;
