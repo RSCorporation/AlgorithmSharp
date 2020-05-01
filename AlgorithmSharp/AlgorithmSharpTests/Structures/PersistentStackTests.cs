@@ -15,6 +15,9 @@ namespace AlgorithmSharpTests.Structures
             stack.Push(1, out stack);
             stack.Push(2, out stack);
             stack.Push(3, out stack);
+            Assert.AreEqual(true, stack.Contains(2));
+            Assert.AreEqual(true, stack.Contains(1));
+            Assert.AreEqual(false, stack.Contains(4));
             Assert.AreEqual(3, stack.Peek());
             Assert.AreEqual(3, stack.Count);
             Assert.AreEqual(true, stack.TryPeek(out _));
@@ -38,6 +41,10 @@ namespace AlgorithmSharpTests.Structures
             var stackCopy = stack;
             stack.Push(3, out stackCopy);
             stack.Push(2, out stack);
+            Assert.AreEqual(true, stackCopy.Contains(3));
+            Assert.AreEqual(false, stack.Contains(3));
+            Assert.AreEqual(false, stackCopy.Contains(2));
+            Assert.AreEqual(true, stack.Contains(2));
             Assert.AreEqual(2, stack.Peek());
             stack.Pop(out stack);
             stack.Pop(out stack);
