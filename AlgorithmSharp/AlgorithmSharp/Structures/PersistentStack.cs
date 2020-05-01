@@ -13,13 +13,47 @@ namespace AlgorithmSharp.Structures
         private T value;
         private PersistentStack<T> popTo;
 
-        private static PersistentStack<T> EmptyStack = new PersistentStack<T>() { popTo = null, Count = 0 };
+        private PersistentStack()
+        {
+            value = default;
+            popTo = null;
+            Count = 0;
+        }
+
+        /// <summary>
+        /// Version of the <see cref="PersistentStack{T}"/> that is empty. If you pop all the elements out of any stack the result will be equal to this field value;
+        /// </summary>
+        public static readonly PersistentStack<T> EmptyStack = new PersistentStack<T>();
 
         public int Count { get; private set; }
 
         public bool IsSynchronized => true;
 
         public object SyncRoot => throw new NotSupportedException($"This collection is thread-safe and do not require {nameof(SyncRoot)}");
+
+        #region Factories
+        /// <summary>
+        /// Returns <see cref="EmptyStack"/>
+        /// </summary>
+        /// <returns><see cref="EmptyStack"/></returns>
+        public static PersistentStack<T> Create() => EmptyStack;
+
+        /// <summary>
+        /// Creates a version of the <see cref="PersistentStack{T}"/> that contains elements copied from the specified collection.
+        /// </summary>
+        /// <param name="collection">The collection to copy elements from.</param>
+        /// <returns>The version of <see cref="PersistentStack{T}"/></returns>
+        /// <exception cref="ArgumentNullException"><paramref name="collection"/> is <c>null</c></exception>
+        public static PersistentStack<T> Create(IEnumerable<T> collection)
+        {
+            if (collection == null)
+                throw new ArgumentNullException(nameof(collection));
+            var curr = Create();
+            foreach (var item in collection)
+                curr.Push(item, out curr);
+            return curr;
+        }
+        #endregion
 
         /// <summary>
         /// Copies the <see cref="PersistentStack{T}"/> to an existing one-dimensional <see cref="Array"/>, starting at the specified array index.
