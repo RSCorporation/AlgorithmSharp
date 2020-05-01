@@ -117,7 +117,7 @@ namespace AlgorithmSharp.Structures
         public T Dequeue(out PersistentQueue<T> newVersion)
         {
             if (Count == 0)
-                throw new InvalidOperationException();
+                throw new InvalidOperationException("Queue is empty");
             if (!reCopy)
             {
                 PersistentStack<T> rn;
@@ -180,6 +180,23 @@ namespace AlgorithmSharp.Structures
         IEnumerator IEnumerable.GetEnumerator()
         {
             throw new NotImplementedException();
+        }
+
+        /// <summary>
+        /// Returns the object at the beginning of the <see cref="PersistentQueue{T}"/> without removing it.
+        /// </summary>
+        /// <returns>The object at the beginning of the <see cref="PersistentQueue{T}"/>.</returns>
+        /// <exception cref="InvalidOperationException">The <see cref="PersistentQueue{T}"/> is empty.</exception>
+        public T Peek()
+        {
+            if (Count == 0)
+                throw new InvalidOperationException("Queue is empty");
+            if (!reCopy)
+                return R.Peek();
+            else if (toCopy > 0)
+                return Rc.Peek();
+            else
+                return R.Peek();
         }
     }
 }
