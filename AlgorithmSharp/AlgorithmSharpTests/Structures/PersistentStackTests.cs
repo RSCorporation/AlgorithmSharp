@@ -1,8 +1,6 @@
-﻿using NUnit.Framework;
+﻿using AlgorithmSharp.Structures;
+using NUnit.Framework;
 using System;
-using System.Collections.Generic;
-using System.Text;
-using AlgorithmSharp.Structures;
 
 namespace AlgorithmSharpTests.Structures
 {
@@ -54,7 +52,7 @@ namespace AlgorithmSharpTests.Structures
             var arr = new int[] { 1, 2, 3 };
             var stack = PersistentStack<int>.Create(arr);
             Assert.AreEqual(3, stack.Peek());
-            Assert.AreEqual(new int[]{ 3, 2, 1}, stack.ToArray());
+            Assert.AreEqual(new int[] { 3, 2, 1 }, stack.ToArray());
             int nxt = 3;
             foreach (var item in stack)
                 Assert.AreEqual(nxt--, item);
