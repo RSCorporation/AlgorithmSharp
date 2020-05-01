@@ -13,7 +13,7 @@ namespace AlgorithmSharp.Structures
         private T value;
         private PersistentStack<T> popTo;
 
-        private static PersistentStack<T> EmptyStack = new PersistentStack<T>() { popTo = null };
+        private static PersistentStack<T> EmptyStack = new PersistentStack<T>() { popTo = null, Count = 0 };
 
         public int Count { get; private set; }
 
@@ -80,5 +80,19 @@ namespace AlgorithmSharp.Structures
         /// <returns>The object at the top of the <see cref="PersistentStack{T}"/>.</returns>
         /// <exception cref="InvalidOperationException">The <see cref="PersistentStack{T}"/> is empty.</exception>
         public T Peek() => this == EmptyStack ? throw new InvalidOperationException($"Stack is empty.") : value;
+
+        /// <summary>
+        /// Removes and returns the object at the top of the <see cref="PersistentStack{T}"/>.
+        /// </summary>
+        /// <param name="newVersion">The version of the <see cref="PersistentStack{T}"/> with removed object at the top</param>
+        /// <returns>The object removed from the top of the <see cref="PersistentStack{T}"/>.</returns>
+        /// <exception cref="InvalidOperationException">The <see cref="PersistentStack{T}"/> is empty.</exception>
+        public T Pop(out PersistentStack<T> newVersion)
+        {
+            if (this == EmptyStack)
+                throw new InvalidOperationException($"Stack is empty.");
+            newVersion = popTo;
+            return value;
+        }
     }
 }
