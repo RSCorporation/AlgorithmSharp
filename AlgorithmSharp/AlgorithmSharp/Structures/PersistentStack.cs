@@ -59,7 +59,7 @@ namespace AlgorithmSharp.Structures
         /// <summary>
         /// Determines whether an element is in the <see cref="PersistentStack{T}"/>
         /// </summary>
-        /// <param name="item">The object to locate in the see cref="PersistentStack{T}"/>. The value can be null for reference types.</param>
+        /// <param name="item">The object to locate in the <see cref="PersistentStack{T}"/>. The value can be <c>null</c> for reference types.</param>
         /// <returns><c>true</c> if <paramref name="item"/> is found in the <see cref="PersistentStack{T}"/>; otherwise, <c>false</c>.</returns>
         public bool Contains(T item)
         {
@@ -84,7 +84,7 @@ namespace AlgorithmSharp.Structures
         /// <summary>
         /// Removes and returns the object at the top of the <see cref="PersistentStack{T}"/>.
         /// </summary>
-        /// <param name="newVersion">The version of the <see cref="PersistentStack{T}"/> with removed object at the top</param>
+        /// <param name="newVersion">The modified version of <see cref="PersistentStack{T}"/></param>
         /// <returns>The object removed from the top of the <see cref="PersistentStack{T}"/>.</returns>
         /// <exception cref="InvalidOperationException">The <see cref="PersistentStack{T}"/> is empty.</exception>
         public T Pop(out PersistentStack<T> newVersion)
@@ -93,6 +93,32 @@ namespace AlgorithmSharp.Structures
                 throw new InvalidOperationException($"Stack is empty.");
             newVersion = popTo;
             return value;
+        }
+
+        /// <summary>
+        /// Inserts an object at the top of the <see cref="PersistentStack{T}"/>.
+        /// </summary>
+        /// <param name="item">The object to push onto the <see cref="PersistentStack{T}"/>. The value can be <c>null</c> for reference types.</param>
+        /// <param name="newVersion">The modified version of <see cref="PersistentStack{T}"/></param>
+        public void Push(T item, out PersistentStack<T> newVersion)
+        {
+            newVersion = new PersistentStack<T>()
+            {
+                Count = Count + 1,
+                popTo = this,
+                value = item
+            };
+        }
+
+        /// <summary>
+        /// Copies the <see cref="PersistentStack{T}"/> to a new array.
+        /// </summary>
+        /// <returns>A new array containing copies of the elements of the <see cref="PersistentStack{T}"/>.</returns>
+        public T[] ToArray()
+        {
+            var result = new T[Count];
+            CopyTo(result, 0);
+            return result;
         }
     }
 }
