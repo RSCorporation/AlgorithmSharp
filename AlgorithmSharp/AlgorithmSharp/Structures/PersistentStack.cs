@@ -12,6 +12,9 @@ namespace AlgorithmSharp.Structures
     {
         private T value;
         private PersistentStack<T> popTo;
+
+        private static PersistentStack<T> EmptyStack = new PersistentStack<T>() { popTo = null };
+
         public int Count { get; private set; }
 
         public bool IsSynchronized => true;
@@ -62,13 +65,20 @@ namespace AlgorithmSharp.Structures
         {
             var comp = EqualityComparer<T>.Default;
             var curr = this;
-            while (curr != null)
+            while (curr != EmptyStack)
             {
-                if ((curr == null && item == null) || comp.Equals(curr.value, item))
+                if ((curr.value == null && item == null) || comp.Equals(curr.value, item))
                     return true;
                 curr = curr.popTo;
             }
             return false;
         }
+
+        /// <summary>
+        /// Returns the object at the top of the <see cref="PersistentStack{T}"/> without removing it.
+        /// </summary>
+        /// <returns>The object at the top of the <see cref="PersistentStack{T}"/>.</returns>
+        /// <exception cref="InvalidOperationException">The <see cref="PersistentStack{T}"/> is empty.</exception>
+        public T Peek() => this == EmptyStack ? throw new InvalidOperationException($"Stack is empty.") : value;
     }
 }
