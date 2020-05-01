@@ -108,6 +108,32 @@ namespace AlgorithmSharp.Structures
             return false;
         }
 
+        public T Dequeue(out PersistentQueue<T> newVersion)
+        {
+            if (!reCopy)
+            {
+                PersistentStack<T> rn;
+                var x = R.Pop(out rn);
+                newVersion = new PersistentQueue<T>(L, Lc, rn, Rc, S, reCopy, toCopy, copied, Count - 1);
+                newVersion.CheckReCopy();
+                return x;
+            }
+            else
+            {
+                PersistentStack<T> rcn;
+                var x = Rc.Pop(out rcn);
+                int c = toCopy;
+                var rn = R;
+                if (toCopy > 0)
+                    c--;
+                else
+                    x = rn.Pop(out rn);
+                newVersion = new PersistentQueue<T>(L, Lc, rn, rcn, S, reCopy, c, copied, Count - 1);
+                newVersion.CheckNormal();
+                return x;
+            }
+        }
+
         public void Enqueue(T item, out PersistentQueue<T> newVersion)
         {
             if (!reCopy)
