@@ -16,6 +16,19 @@ namespace AlgorithmSharp.Structures
         private int toCopy;
         private bool copied;
 
+        public PersistentQueue(PersistentStack<T> l, PersistentStack<T> lc, PersistentStack<T> r, PersistentStack<T> rc, PersistentStack<T> s, bool reCopy, int toCopy, bool copied, int count)
+        {
+            L = l;
+            Lc = lc;
+            R = r;
+            Rc = rc;
+            S = s;
+            this.reCopy = reCopy;
+            this.toCopy = toCopy;
+            this.copied = copied;
+            Count = count;
+        }
+        public PersistentQueue() : this(PersistentStack<T>.Create(), PersistentStack<T>.Create(), PersistentStack<T>.Create(), PersistentStack<T>.Create(), PersistentStack<T>.Create(), false, 0, true, 0) { }
         public int Count { get; private set; }
 
         public bool IsSynchronized => true;
