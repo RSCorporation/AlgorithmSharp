@@ -8,8 +8,4 @@
     <DocumentationFile></DocumentationFile>
   </PropertyGroup>
 
-  <ItemGroup>
-    <PackageReference Include="System.Diagnostics.Contracts" Version="4.3.0" />
-  </ItemGroup>
-
 </Project>
