@@ -198,5 +198,26 @@ namespace AlgorithmSharp.Structures
             else
                 return R.Peek();
         }
+
+        /// <summary>
+        /// Removes the object at the beginning of the <see cref="PersistentQueue{T}"/>, and copies it to the result parameter.
+        /// </summary>
+        /// <param name="result">The removed object.</param>
+        /// <param name="newVersion">The modified version of <see cref="PersistentQueue{T}"/></param>
+        /// <returns><c>true</c> if the object is successfully removed; <c>false</c> if the <see cref="PersistentQueue{T}"/> is empty.</returns>
+        public bool TryDequeue(out T result, out PersistentQueue<T> newVersion)
+        {
+            if (Count == 0)
+            {
+                result = default;
+                newVersion = this;
+                return false;
+            }
+            else
+            {
+                result = Dequeue(out newVersion);
+                return true;
+            }
+        }
     }
 }
