@@ -120,5 +120,24 @@ namespace AlgorithmSharp.Structures
             CopyTo(result, 0);
             return result;
         }
+
+        /// <summary>
+        /// Returns a value that indicates whether there is an object at the top of the <see cref="PersistentStack{T}"/>, and if one is present, copies it to the <paramref name="result"/> parameter. The object is not removed from the <see cref="PersistentStack{T}"/>.
+        /// </summary>
+        /// <param name="result">If present, the object at the top of the <see cref="PersistentStack{T}"/>; otherwise, the default value of <typeparamref name="T"/>.</param>
+        /// <returns><c>true</c> if there is an object at the top of the <see cref="PersistentStack{T}"/>; <c>false</c> if the <see cref="PersistentStack{T}"/> is empty.</returns>
+        public bool TryPeek(out T result)
+        {
+            if (this == EmptyStack)
+            {
+                result = default(T);
+                return false;
+            }
+            else
+            {
+                result = value;
+                return true;
+            }
+        }
     }
 }

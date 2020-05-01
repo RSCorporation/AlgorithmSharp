@@ -52,5 +52,12 @@
             </summary>
             <returns>A new array containing copies of the elements of the <see cref="T:AlgorithmSharp.Structures.PersistentStack`1"/>.</returns>
         </member>
+        <member name="M:AlgorithmSharp.Structures.PersistentStack`1.TryPeek(`0@)">
+            <summary>
+            Returns a value that indicates whether there is an object at the top of the <see cref="T:AlgorithmSharp.Structures.PersistentStack`1"/>, and if one is present, copies it to the <paramref name="result"/> parameter. The object is not removed from the <see cref="T:AlgorithmSharp.Structures.PersistentStack`1"/>.
+            </summary>
+            <param name="result">If present, the object at the top of the <see cref="T:AlgorithmSharp.Structures.PersistentStack`1"/>; otherwise, the default value of <typeparamref name="T"/>.</param>
+            <returns><c>true</c> if there is an object at the top of the <see cref="T:AlgorithmSharp.Structures.PersistentStack`1"/>; <c>false</c> if the <see cref="T:AlgorithmSharp.Structures.PersistentStack`1"/> is empty.</returns>
+        </member>
     </members>
 </doc>
