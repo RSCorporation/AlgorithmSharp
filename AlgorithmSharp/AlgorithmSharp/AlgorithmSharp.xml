@@ -4,12 +4,25 @@
         <name>AlgorithmSharp</name>
     </assembly>
     <members>
+        <member name="M:AlgorithmSharp.Structures.PersistentStack`1.CopyTo(System.Array,System.Int32)">
+            <summary>
+            Copies the <see cref="T:AlgorithmSharp.Structures.PersistentStack`1"/> to an existing one-dimensional <see cref="T:System.Array"/>, starting at the specified array index.
+            </summary>
+            <param name="array">The one-dimensional <see cref="T:System.Array"/> that is the destination of the elements copied from <see cref="T:AlgorithmSharp.Structures.PersistentStack`1"/>. The <see cref="T:System.Array"/> must have zero-based indexing.</param>
+            <param name="index">The zero-based index in <paramref name="array"/> at which copying begins.</param>
+        </member>
+        <member name="M:AlgorithmSharp.Structures.PersistentStack`1.GetEnumerator">
+            <summary>
+            Returns an enumerator for the <see cref="T:AlgorithmSharp.Structures.PersistentStack`1"/>.
+            </summary>
+            <returns>An enumerator for the <see cref="T:AlgorithmSharp.Structures.PersistentStack`1"/></returns>
+        </member>
         <member name="M:AlgorithmSharp.Structures.PersistentStack`1.Contains(`0)">
             <summary>
             Determines whether an element is in the <see cref="T:AlgorithmSharp.Structures.PersistentStack`1"/>
             </summary>
             <param name="item">The object to locate in the see cref="PersistentStack{T}"/>. The value can be null for reference types.</param>
-            <returns><c>true</c> if <paramref name="item"/> is found in the <see cref="T:AlgorithmSharp.Structures.PersistentStack`1"/>; otherwise, false.</returns>
+            <returns><c>true</c> if <paramref name="item"/> is found in the <see cref="T:AlgorithmSharp.Structures.PersistentStack`1"/>; otherwise, <c>false</c>.</returns>
         </member>
     </members>
 </doc>

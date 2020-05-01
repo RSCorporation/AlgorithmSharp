@@ -18,6 +18,11 @@ namespace AlgorithmSharp.Structures
 
         public object SyncRoot => throw new NotSupportedException($"This collection is thread-safe and do not require {nameof(SyncRoot)}");
 
+        /// <summary>
+        /// Copies the <see cref="PersistentStack{T}"/> to an existing one-dimensional <see cref="Array"/>, starting at the specified array index.
+        /// </summary>
+        /// <param name="array">The one-dimensional <see cref="Array"/> that is the destination of the elements copied from <see cref="PersistentStack{T}"/>. The <see cref="Array"/> must have zero-based indexing.</param>
+        /// <param name="index">The zero-based index in <paramref name="array"/> at which copying begins.</param>
         public void CopyTo(Array array, int index)
         {
             var curr = this;
@@ -29,6 +34,10 @@ namespace AlgorithmSharp.Structures
             }
         }
 
+        /// <summary>
+        /// Returns an enumerator for the <see cref="PersistentStack{T}"/>.
+        /// </summary>
+        /// <returns>An enumerator for the <see cref="PersistentStack{T}"/></returns>
         public IEnumerator<T> GetEnumerator()
         {
             var curr = this;
