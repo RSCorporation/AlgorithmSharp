@@ -1,4 +1,6 @@
-﻿using System;
+﻿// This is an open source non-commercial project.Dear PVS-Studio, please check it.
+// PVS-Studio Static Code Analyzer for C, C++, C#, and Java: http://www.viva64.com
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Text;
@@ -29,6 +31,63 @@ namespace AlgorithmSharp.Structures
             Count = count;
         }
         public PersistentQueue() : this(PersistentStack<T>.Create(), PersistentStack<T>.Create(), PersistentStack<T>.Create(), PersistentStack<T>.Create(), PersistentStack<T>.Create(), false, 0, true, 0) { }
+
+        private void CheckReCopy()
+        {
+            if (L.Count > R.Count)
+            {
+                reCopy = true;
+                toCopy = R.Count;
+                copied = false;
+                CheckNormal();
+            }
+            else
+                reCopy = false;
+        }
+        private void CheckNormal()
+        {
+            int todo = 3;
+            PersistentStack<T> Rn = R, Sn = S;
+            bool cc = copied;
+            while(!cc && todo > 0 && Rn.Count > 0)
+            {
+                var x = Rn.Pop(out Rn);
+                Sn.Push(x, out Sn);
+                todo--;
+            }
+            PersistentStack<T> Ln = L;
+            while(todo > 0 && Ln.Count > 0)
+            {
+                cc = true;
+                var x = Ln.Pop(out Ln);
+                Rn.Push(x, out Rn);
+                todo--;
+            }
+            var c = toCopy;
+            while (todo > 0 && Sn.Count > 0)
+            {
+                var x = Sn.Pop(out Sn);
+                if (c > 0)
+                {
+                    Rn.Push(x, out Rn);
+                    c--;
+                }
+                todo--;
+            }
+            var Lcn = Lc;
+            if (S.Count == 0)
+            {
+                (Ln, Lcn) = (Lcn, Ln);
+            }
+            L = Ln;
+            Lc = Lcn;
+            R = Rn;
+            S = Sn;
+            reCopy = (S.Count != 0);
+            toCopy = c;
+            copied = cc;
+        }
+
         public int Count { get; private set; }
 
         public bool IsSynchronized => true;
@@ -47,6 +106,26 @@ namespace AlgorithmSharp.Structures
                 if (comp.Equals(curr, item))
                     return true;
             return false;
+        }
+
+        public void Enqueue(T item, out PersistentQueue<T> newVersion)
+        {
+            if (!reCopy)
+            {
+                PersistentStack<T> ln;
+                L.Push(item, out ln);
+                newVersion = new PersistentQueue<T>(ln, Lc, R, Rc, S, reCopy, toCopy, copied, Count + 1);
+                newVersion.CheckReCopy();
+                return;
+            }
+            else
+            {
+                PersistentStack<T> lcn;
+                Lc.Push(item, out lcn);
+                newVersion = new PersistentQueue<T>(L, lcn, R, Rc, S, reCopy, toCopy, copied, Count + 1);
+                newVersion.CheckNormal();
+                return;
+            }
         }
 
         public void CopyTo(Array array, int index)
