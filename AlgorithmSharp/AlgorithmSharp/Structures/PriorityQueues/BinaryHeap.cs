@@ -40,6 +40,39 @@ namespace AlgorithmSharp.Structures.PriorityQueues
             }
         }
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="BinaryHeap{TKey, TValue}"/> class that is empty and has the default initial capacity.
+        /// </summary>
+        public BinaryHeap() : this(4) { }
+
+        /// <summary>
+        /// Initializes new <see cref="BinaryHeap{TKey, TValue}"/> that contains elements copied from the specified collection.
+        /// </summary>
+        /// <param name="collection">The collection whose elements are copied to the new heap.</param>
+        /// <exception cref="ArgumentNullException"><paramref name="collection"/> is <c>null</c></exception>
+        public BinaryHeap(IEnumerable<KeyValuePair<TKey, TValue>> collection)
+        {
+            if (collection == null)
+                throw new ArgumentNullException(nameof(collection));
+            heap = collection.ToArray();
+            Count = heap.Length;
+            for (var i = Count << 1; i >= 0; i--)
+                SiftDown(i);
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="BinaryHeap{TKey, TValue}"/> class that is empty and has the specified initial capacity.
+        /// </summary>
+        /// <param name="capacity">The number of elements that the new list can initially store.</param>
+        /// <exception cref="ArgumentOutOfRangeException"><paramref name="capacity"/> is less than 0</exception>
+        public BinaryHeap(int capacity)
+        {
+            if (capacity < 0)
+                throw new ArgumentOutOfRangeException(nameof(capacity), "Capacity can't be negative");
+            heap = new KeyValuePair<TKey, TValue>[capacity];
+            Count = 0;
+        }
+
         private void IncreaseCapacity()
         {
             if (heap.Length == Count)
