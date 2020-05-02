@@ -28,7 +28,7 @@ namespace AlgorithmSharp.Structures
 
         public bool IsSynchronized => true;
 
-        public object SyncRoot => throw new NotSupportedException($"This collection is thread-safe and do not require {nameof(SyncRoot)}");
+        public object SyncRoot { get; } = new object();
 
         #region Factories
         /// <summary>
