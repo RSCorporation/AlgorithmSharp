@@ -1,10 +1,11 @@
-﻿// This is an open source non-commercial project.Dear PVS-Studio, please check it.
+﻿// This is an open source non-commercial project. Dear PVS-Studio, please check it.
+
 // PVS-Studio Static Code Analyzer for C, C++, C#, and Java: http://www.viva64.com
+
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 
 namespace AlgorithmSharp.Structures
 {
@@ -19,7 +20,7 @@ namespace AlgorithmSharp.Structures
         private int toCopy;
         private bool copied;
 
-        public PersistentQueue(PersistentStack<T> l, PersistentStack<T> lc, PersistentStack<T> r, PersistentStack<T> rc, PersistentStack<T> s, bool reCopy, int toCopy, bool copied, int count)
+        private PersistentQueue(PersistentStack<T> l, PersistentStack<T> lc, PersistentStack<T> r, PersistentStack<T> rc, PersistentStack<T> s, bool reCopy, int toCopy, bool copied, int count)
         {
             L = l;
             Lc = lc;
@@ -31,7 +32,36 @@ namespace AlgorithmSharp.Structures
             this.copied = copied;
             Count = count;
         }
-        public PersistentQueue() : this(PersistentStack<T>.Create(), PersistentStack<T>.Create(), PersistentStack<T>.Create(), PersistentStack<T>.Create(), PersistentStack<T>.Create(), false, 0, true, 0) { }
+        private PersistentQueue() : this(PersistentStack<T>.Create(), PersistentStack<T>.Create(), PersistentStack<T>.Create(), PersistentStack<T>.Create(), PersistentStack<T>.Create(), false, 0, true, 0) { }
+
+        private static PersistentQueue<T> emptyQueue = new PersistentQueue<T>();
+
+        #region Factories
+        /// <summary>
+        /// Returns empty <see cref="PersistentQueue{T}"/>
+        /// </summary>
+        /// <returns>Empty <see cref="PersistentQueue{T}"/></returns>
+        public static PersistentQueue<T> Create()
+        {
+            return emptyQueue;
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="PersistentQueue{T}"/> class that contains elements copied from the specified collection
+        /// </summary>
+        /// <param name="collection">The collection whose elements are copied to the new <see cref="PersistentQueue{T}"/>.</param>
+        /// <returns>The version of <see cref="PersistentQueue{T}"/></returns>
+        /// <exception cref="ArgumentNullException"><paramref name="collection"/> is <c>null</c></exception>
+        public static PersistentQueue<T> Create(IEnumerable<T> collection)
+        {
+            if (collection == null)
+                throw new ArgumentNullException(nameof(collection));
+            var version = emptyQueue;
+            foreach (var item in collection)
+                version.Enqueue(item, out version);
+            return version;
+        }
+        #endregion
 
         private void CheckReCopy()
         {
@@ -50,14 +80,14 @@ namespace AlgorithmSharp.Structures
             int todo = 3;
             PersistentStack<T> Rn = R, Sn = S;
             bool cc = copied;
-            while(!cc && todo > 0 && Rn.Count > 0)
+            while (!cc && todo > 0 && Rn.Count > 0)
             {
                 var x = Rn.Pop(out Rn);
                 Sn.Push(x, out Sn);
                 todo--;
             }
             PersistentStack<T> Ln = L;
-            while(todo > 0 && Ln.Count > 0)
+            while (todo > 0 && Ln.Count > 0)
             {
                 cc = true;
                 var x = Ln.Pop(out Ln);
