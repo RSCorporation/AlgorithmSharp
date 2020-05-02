@@ -33,7 +33,7 @@ namespace AlgorithmSharp.Structures.PriorityQueues
         }
         private void SiftUp(int i)
         {
-            while(heap[i].Key.CompareTo(heap[(i - 1) >> 1].Key) < 0)
+            while (heap[i].Key.CompareTo(heap[(i - 1) >> 1].Key) < 0)
             {
                 (heap[i], heap[(i - 1) >> 1]) = (heap[(i - 1) >> 1], heap[i]);
                 i = (i - 1) >> 1;
@@ -89,7 +89,13 @@ namespace AlgorithmSharp.Structures.PriorityQueues
 
         public bool IsReadOnly => false;
 
-        public void Add(KeyValuePair<TKey, TValue> item) => Insert(item.Key, item.Value);
+        public void Add(KeyValuePair<TKey, TValue> item)
+        {
+            IncreaseCapacity();
+            heap[Count] = item;
+            Count++;
+            SiftUp(Count - 1);
+    }
 
         public void Clear() => Count = 0;
 
@@ -131,13 +137,7 @@ namespace AlgorithmSharp.Structures.PriorityQueues
 
         public IEnumerator<KeyValuePair<TKey, TValue>> GetEnumerator() => heap.Take(Count).GetEnumerator();
 
-        public void Insert(TKey key, TValue value)
-        {
-            IncreaseCapacity();
-            heap[Count] = new KeyValuePair<TKey, TValue>(key, value);
-            Count++;
-            SiftUp(Count - 1);
-        }
+        public void Insert(TKey key, TValue value) => Add(new KeyValuePair<TKey, TValue>(key, value));
 
         public TValue Peek() => Peek(out _);
 
