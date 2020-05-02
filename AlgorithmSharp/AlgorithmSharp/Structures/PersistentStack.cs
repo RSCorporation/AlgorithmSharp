@@ -77,7 +77,7 @@ namespace AlgorithmSharp.Structures
         public IEnumerator<T> GetEnumerator()
         {
             var curr = this;
-            while (curr != null)
+            while (curr != EmptyStack)
             {
                 yield return curr.value;
                 curr = curr.popTo;
