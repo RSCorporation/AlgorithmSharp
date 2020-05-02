@@ -206,20 +206,10 @@ namespace AlgorithmSharp.Structures
 
         public IEnumerator<T> GetEnumerator()
         {
-            if (!reCopy)
+            var currcopy = this;
+            while (currcopy.Count > 0)
             {
-                foreach (var item in R)
-                    yield return item;
-                foreach (var item in L.Reverse())
-                    yield return item;
-            }
-            else
-            {
-                var currcopy = this;
-                while (currcopy.Count > 0)
-                {
-                    yield return currcopy.Dequeue(out currcopy);
-                }
+                yield return currcopy.Dequeue(out currcopy);
             }
         }
 
