@@ -39,6 +39,16 @@ namespace AlgorithmSharp.Structures.PriorityQueues
             }
         }
 
+        private void IncreaseCapacity()
+        {
+            if (heap.Length == Count)
+            {
+                var newHeap = new KeyValuePair<TKey, TValue>[Count << 1];
+                Array.Copy(heap, 0, newHeap, 0, Count);
+                heap = newHeap;
+            }
+        }
+
         public bool IsSynchronized => false;
 
         public object SyncRoot { get; } = new object();
@@ -51,17 +61,24 @@ namespace AlgorithmSharp.Structures.PriorityQueues
 
         public bool Contains(KeyValuePair<TKey, TValue> item)
         {
-            throw new NotImplementedException();
+            var comp = EqualityComparer<KeyValuePair<TKey, TValue>>.Default;
+            foreach (var curr in this)
+                if (comp.Equals(curr, item))
+                    return true;
+            return false;
+
         }
 
         public void CopyTo(Array array, int index)
         {
-            throw new NotImplementedException();
+            foreach (var i in this)
+                array.SetValue(i, index++);
         }
 
         public void CopyTo(KeyValuePair<TKey, TValue>[] array, int arrayIndex)
         {
-            throw new NotImplementedException();
+            foreach (var i in this)
+                array[arrayIndex++] = i;
         }
 
         public TValue Extract() => Extract(out _);
@@ -85,7 +102,10 @@ namespace AlgorithmSharp.Structures.PriorityQueues
 
         public void Insert(TKey key, TValue value)
         {
-            throw new NotImplementedException();
+            IncreaseCapacity();
+            heap[Count] = new KeyValuePair<TKey, TValue>(key, value);
+            Count++;
+            SiftUp(Count - 1);
         }
 
         public TValue Peek() => Peek(out _);
