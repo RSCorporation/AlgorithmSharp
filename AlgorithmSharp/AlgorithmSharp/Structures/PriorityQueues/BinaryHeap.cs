@@ -64,14 +64,18 @@ namespace AlgorithmSharp.Structures.PriorityQueues
             throw new NotImplementedException();
         }
 
-        public TValue Extract()
-        {
-            throw new NotImplementedException();
-        }
+        public TValue Extract() => Extract(out _);
 
         public TValue Extract(out TKey priority)
         {
-            throw new NotImplementedException();
+            if (Count == 0)
+                throw new InvalidOperationException("Binary heap is empty");
+            var result = heap[0];
+            heap[0] = heap[Count - 1];
+            Count--;
+            SiftDown(0);
+            priority = result.Key;
+            return result.Value;
         }
 
         public IEnumerator<KeyValuePair<TKey, TValue>> GetEnumerator()
@@ -84,12 +88,7 @@ namespace AlgorithmSharp.Structures.PriorityQueues
             throw new NotImplementedException();
         }
 
-        public TValue Peek()
-        {
-            if (Count == 0)
-                throw new InvalidOperationException("Binary heap is empty");
-            return heap[0].Value;
-        }
+        public TValue Peek() => Peek(out _);
 
         public TValue Peek(out TKey priority)
         {
