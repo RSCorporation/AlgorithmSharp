@@ -3,6 +3,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 
 namespace AlgorithmSharp.Structures
@@ -174,12 +175,26 @@ namespace AlgorithmSharp.Structures
 
         public IEnumerator<T> GetEnumerator()
         {
-            throw new NotImplementedException();
+            if (!reCopy)
+            {
+                foreach (var item in R)
+                    yield return item;
+                foreach (var item in L.Reverse())
+                    yield return item;
+            }
+            else
+            {
+                var currcopy = this;
+                while (currcopy.Count > 0)
+                {
+                    yield return currcopy.Dequeue(out currcopy);
+                }
+            }
         }
 
         IEnumerator IEnumerable.GetEnumerator()
         {
-            throw new NotImplementedException();
+            return GetEnumerator();
         }
 
         /// <summary>
