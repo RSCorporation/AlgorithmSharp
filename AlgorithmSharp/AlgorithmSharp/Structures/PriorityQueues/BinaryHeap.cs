@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 
 namespace AlgorithmSharp.Structures.PriorityQueues
@@ -95,10 +96,7 @@ namespace AlgorithmSharp.Structures.PriorityQueues
             return result.Value;
         }
 
-        public IEnumerator<KeyValuePair<TKey, TValue>> GetEnumerator()
-        {
-            throw new NotImplementedException();
-        }
+        public IEnumerator<KeyValuePair<TKey, TValue>> GetEnumerator() => heap.Take(Count).GetEnumerator();
 
         public void Insert(TKey key, TValue value)
         {
@@ -118,14 +116,19 @@ namespace AlgorithmSharp.Structures.PriorityQueues
             return heap[0].Value;
         }
 
-        public bool Remove(KeyValuePair<TKey, TValue> item)
+        public bool Remove(KeyValuePair<TKey, TValue> item) => throw new NotSupportedException();
+
+        /// <summary>
+        /// Copies the elements of the <see cref="BinaryHeap{TKey, TValue}"/>> to a new array.
+        /// </summary>
+        /// <returns>An array containing copies of the elements of the <see cref="BinaryHeap{TKey, TValue}"/>.</returns>
+        public KeyValuePair<TKey, TValue>[] ToArray()
         {
-            throw new NotImplementedException();
+            var result = new KeyValuePair<TKey, TValue>[Count];
+            CopyTo(result, 0);
+            return result;
         }
 
-        IEnumerator IEnumerable.GetEnumerator()
-        {
-            throw new NotImplementedException();
-        }
+        IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
     }
 }
