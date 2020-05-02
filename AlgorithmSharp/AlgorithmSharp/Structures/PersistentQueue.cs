@@ -123,7 +123,7 @@ namespace AlgorithmSharp.Structures
 
         public bool IsSynchronized => true;
 
-        public object SyncRoot => throw new NotSupportedException($"This collection is thread-safe and do not require {nameof(SyncRoot)}");
+        public object SyncRoot { get; } = new object();
 
         /// <summary>
         /// Determines whether an element is in the <see cref="PersistentQueue{T}"/>.
