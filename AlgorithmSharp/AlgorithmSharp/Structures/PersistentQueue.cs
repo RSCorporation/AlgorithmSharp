@@ -219,5 +219,24 @@ namespace AlgorithmSharp.Structures
                 return true;
             }
         }
+
+        /// <summary>
+        /// Returns a value that indicates whether there is an object at the beginning of the <see cref="PersistentQueue{T}"/>, and if one is present, copies it to the result parameter. The object is not removed from the <see cref="PersistentQueue{T}"/>.
+        /// </summary>
+        /// <param name="result">If present, the object at the beginning of the <see cref="PersistentQueue{T}"/>; otherwise, the default value of <typeparamref name="T"/>.</param>
+        /// <returns><c>true</c> if there is an object at the beginning of the <see cref="PersistentQueue{T}"/>; <c>false</c> if the <see cref="PersistentQueue{T}"/> is empty.</returns>
+        public bool TryPeek(out T result)
+        {
+            if (Count == 0)
+            {
+                result = default;
+                return false;
+            }
+            else
+            {
+                result = Peek();
+                return true;
+            }
+        }
     }
 }
