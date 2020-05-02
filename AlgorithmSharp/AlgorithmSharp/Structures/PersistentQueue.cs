@@ -170,7 +170,8 @@ namespace AlgorithmSharp.Structures
 
         public void CopyTo(Array array, int index)
         {
-            throw new NotImplementedException();
+            foreach (var item in this)
+                array.SetValue(item, index++);
         }
 
         public IEnumerator<T> GetEnumerator()
@@ -212,6 +213,17 @@ namespace AlgorithmSharp.Structures
                 return Rc.Peek();
             else
                 return R.Peek();
+        }
+
+        /// <summary>
+        /// Copies the <see cref="PersistentQueue{T}"/> elements to a new array.
+        /// </summary>
+        /// <returns>A new array containing elements copied from the <see cref="PersistentQueue{T}"/>.</returns>
+        public T[] ToArray()
+        {
+            var arr = new T[Count];
+            CopyTo(arr, 0);
+            return arr;
         }
 
         /// <summary>
