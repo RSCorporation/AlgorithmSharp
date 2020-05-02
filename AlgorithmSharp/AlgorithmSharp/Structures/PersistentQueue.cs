@@ -67,6 +67,7 @@ namespace AlgorithmSharp.Structures
         {
             if (L.Count > R.Count)
             {
+                Rc = R;
                 reCopy = true;
                 toCopy = R.Count;
                 copied = false;
@@ -159,12 +160,15 @@ namespace AlgorithmSharp.Structures
             }
             else
             {
-                PersistentStack<T> rcn;
-                var x = Rc.Pop(out rcn);
+                PersistentStack<T> rcn = Rc;
                 int c = toCopy;
                 var rn = R;
+                T x;
                 if (toCopy > 0)
+                {
+                    x = Rc.Pop(out rcn);
                     c--;
+                }
                 else
                     x = rn.Pop(out rn);
                 newVersion = new PersistentQueue<T>(L, Lc, rn, rcn, S, reCopy, c, copied, Count - 1);
