@@ -106,7 +106,7 @@ namespace AlgorithmSharp.Structures
                 todo--;
             }
             var Lcn = Lc;
-            if (S.Count == 0)
+            if (Sn.Count == 0)
             {
                 (Ln, Lcn) = (Lcn, Ln);
             }
