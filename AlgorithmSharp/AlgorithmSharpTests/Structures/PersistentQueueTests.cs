@@ -45,5 +45,24 @@ namespace AlgorithmSharpTests.Structures
             Assert.AreEqual(false, queue.TryDequeue(out _, out var queuec));
             Assert.AreSame(queue, queuec);
         }
+        [Test]
+        public void Branchicg()
+        {
+            var queue = PersistentQueue<int>.Create(new int[] { 1, 2, 3 });
+            var queue2 = queue;
+            Assert.AreEqual(new int[] { 1, 2, 3 }, queue);
+            queue.Enqueue(4, out queue);
+            queue2.Enqueue(5, out queue2);
+            Assert.AreEqual(true, queue.Contains(4));
+            Assert.AreEqual(true, queue2.Contains(5));
+            Assert.AreEqual(false, queue.Contains(5));
+            Assert.AreEqual(false, queue2.Contains(4));
+            queue2.Dequeue(out queue2);
+            queue2.Dequeue(out queue2);
+            queue2.Dequeue(out queue2);
+            queue2.Dequeue(out queue2);
+            Assert.AreEqual(0, queue2.Count);
+            Assert.AreEqual(new int[] { 1, 2, 3, 4 }, queue);
+        }
     }
 }
