@@ -95,7 +95,7 @@ namespace AlgorithmSharp.Structures.PriorityQueues
             heap[Count] = item;
             Count++;
             SiftUp(Count - 1);
-    }
+        }
 
         public void Clear() => Count = 0;
 
