@@ -1,4 +1,6 @@
-﻿using System;
+﻿// This is an open source non-commercial project. Dear PVS-Studio, please check it.
+// PVS-Studio Static Code Analyzer for C, C++, C#, and Java: http://www.viva64.com
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Text;
@@ -15,6 +17,16 @@ namespace AlgorithmSharp.Structures.PriorityQueues
             internal Node sibling;
             internal Node child;
             internal int degree;
+            internal IEnumerable<Node> Enumerate()
+            {
+                yield return this;
+                if (child != null)
+                    foreach (var node in child.Enumerate())
+                        yield return node;
+                if (sibling != null)
+                    foreach (var node in sibling.Enumerate())
+                        yield return node;
+            }
         }
 
         private Node head;
@@ -70,7 +82,8 @@ namespace AlgorithmSharp.Structures.PriorityQueues
 
         public IEnumerator<KeyValuePair<TKey, TValue>> GetEnumerator()
         {
-            throw new NotImplementedException();
+            foreach (var node in head.Enumerate())
+                yield return new KeyValuePair<TKey, TValue>(node.Key, node.Value);
         }
 
         public void Insert(TKey key, TValue value)
@@ -155,9 +168,6 @@ namespace AlgorithmSharp.Structures.PriorityQueues
             throw new NotImplementedException();
         }
 
-        IEnumerator IEnumerable.GetEnumerator()
-        {
-            throw new NotImplementedException();
-        }
+        IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
     }
 }
