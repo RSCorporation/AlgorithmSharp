@@ -3,6 +3,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics.Contracts;
 using System.Text;
 
 namespace AlgorithmSharp.Structures.PriorityQueues
@@ -86,21 +87,41 @@ namespace AlgorithmSharp.Structures.PriorityQueues
                 yield return new KeyValuePair<TKey, TValue>(node.Key, node.Value);
         }
 
-        public void Insert(TKey key, TValue value)
+        void IPriorityQueue<TKey, TValue>.Insert(TKey key, TValue value) => Insert(key, value);
+        public Node Insert(TKey key, TValue value)
         {
             throw new NotImplementedException();
         }
 
+        /// <summary>
+        /// Creates a heap that contains elements from both <paramref name="h1"/> and <paramref name="h2"/>.
+        /// After this operation both arguments are invalidated.
+        /// </summary>
+        /// <param name="h1">First heap</param>
+        /// <param name="h2">Second heap</param>
+        /// <returns>Heap that contains elements from both <paramref name="h1"/> and <paramref name="h2"/></returns>
+        /// <exception cref="ArgumentNullException"><paramref name="h1"/> or <paramref name="h2"/> is <c>null</c></exception>
         public static BinomialHeap<TKey, TValue> Meld(BinomialHeap<TKey, TValue> h1, BinomialHeap<TKey, TValue> h2)
+        {
+            Contract.Requires<ArgumentNullException>(h1 != null);
+            Contract.Requires<ArgumentNullException>(h2 != null);
+            return new BinomialHeap<TKey, TValue>()
+            {
+                head = Meld(h1.head, h2.head),
+                Count = h1.Count + h2.Count
+            };
+        }
+
+        private static Node Meld(Node h1, Node h2)
         {
             if (h1 == null)
                 return h2;
             if (h2 == null)
                 return h1;
-            var result = new BinomialHeap<TKey, TValue>();
-            var curH = result.head;
-            var curH1 = h1.head;
-            var curH2 = h2.head;
+            var result = new Node();
+            var curH = result;
+            var curH1 = h1;
+            var curH2 = h2;
             while (curH1 != null && curH2 != null)
             {
                 if (curH1.degree < curH2.degree)
@@ -108,7 +129,7 @@ namespace AlgorithmSharp.Structures.PriorityQueues
                     if (curH != null)
                         curH.sibling = curH1;
                     else
-                        result.head = curH1;
+                        result = curH1;
                     curH = curH1;
                     curH1 = curH1.sibling;
                 }
@@ -117,7 +138,7 @@ namespace AlgorithmSharp.Structures.PriorityQueues
                     if (curH != null)
                         curH.sibling = curH2;
                     else
-                        result.head = curH2;
+                        result = curH2;
                     curH = curH2;
                     curH2 = curH2.sibling;
                 }
@@ -127,16 +148,16 @@ namespace AlgorithmSharp.Structures.PriorityQueues
                 if (curH != null)
                     curH.sibling = curH2;
                 else
-                    result.head = curH2;
+                    result = curH2;
             }
             else
             {
                 if (curH != null)
                     curH.sibling = curH1;
                 else
-                    result.head = curH1;
+                    result = curH1;
             }
-            curH = result.head;
+            curH = result;
             while (curH.sibling != null)
             {
                 if (curH.degree == curH.sibling.degree)
