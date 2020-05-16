@@ -78,7 +78,33 @@ namespace AlgorithmSharp.Structures.PriorityQueues
 
         public TValue Extract(out TKey priority)
         {
-            throw new NotImplementedException();
+            Contract.Requires<InvalidOperationException>(Count > 0, $"{nameof(BinaryHeap<TKey, TValue>)} is empty");
+            var min = head;
+            Node minprev = null;
+            var curr = head.sibling;
+            var currPrev = head;
+            while(curr != null)
+            {
+                if (curr.Key.CompareTo(min.Key) < 0)
+                    (min, minprev) = (curr, currPrev);
+                currPrev = curr;
+                curr = curr.sibling;
+            }
+
+            //Cut min from roots list
+            if (minprev == null)
+                head = min.sibling;
+            else
+                minprev.sibling = min.sibling;
+            curr = min.child;
+            while (curr != null)
+            {
+                curr.parent = null;
+                curr = curr.sibling;
+            }
+            head = Meld(head, min.child);
+            priority = min.Key;
+            return min.Value;
         }
 
         public IEnumerator<KeyValuePair<TKey, TValue>> GetEnumerator()
@@ -178,20 +204,23 @@ namespace AlgorithmSharp.Structures.PriorityQueues
 
         public TValue Peek(out TKey priority)
         {
+            var result = GetMin();
+            priority = result.Key;
+            return result.Value;
+        }
+
+        private Node GetMin()
+        {
             Contract.Requires<InvalidOperationException>(Count > 0, $"{nameof(BinomialHeap<TKey, TValue>)} is empty");
             var minNode = head;
             var curr = head.sibling;
             while (curr != null)
                 if (curr.Key.CompareTo(minNode.Key) < 0)
                     minNode = curr;
-            priority = minNode.Key;
-            return minNode.Value;
+            return minNode;
         }
 
-        public bool Remove(KeyValuePair<TKey, TValue> item)
-        {
-            throw new NotImplementedException();
-        }
+        public bool Remove(KeyValuePair<TKey, TValue> item) => throw new NotSupportedException();
 
         IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
     }
