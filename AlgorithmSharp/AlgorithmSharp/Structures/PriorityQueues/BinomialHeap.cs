@@ -174,14 +174,18 @@ namespace AlgorithmSharp.Structures.PriorityQueues
             return result;
         }
 
-        public TValue Peek()
-        {
-            throw new NotImplementedException();
-        }
+        public TValue Peek() => Peek(out _);
 
         public TValue Peek(out TKey priority)
         {
-            throw new NotImplementedException();
+            Contract.Requires<InvalidOperationException>(Count > 0, $"{nameof(BinomialHeap<TKey, TValue>)} is empty");
+            var minNode = head;
+            var curr = head.sibling;
+            while (curr != null)
+                if (curr.Key.CompareTo(minNode.Key) < 0)
+                    minNode = curr;
+            priority = minNode.Key;
+            return minNode.Value;
         }
 
         public bool Remove(KeyValuePair<TKey, TValue> item)
