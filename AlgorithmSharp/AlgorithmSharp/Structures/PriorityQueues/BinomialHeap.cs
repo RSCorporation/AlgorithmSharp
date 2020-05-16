@@ -9,6 +9,8 @@ namespace AlgorithmSharp.Structures.PriorityQueues
     {
         public class Node
         {
+            public TKey Key { get; private set; }
+            public TValue Value;
             internal Node parent;
             internal Node sibling;
             internal Node child;
@@ -29,28 +31,37 @@ namespace AlgorithmSharp.Structures.PriorityQueues
 
         public void Clear()
         {
-            throw new NotImplementedException();
+            head = null;
+            Count = 0;
         }
 
         public bool Contains(KeyValuePair<TKey, TValue> item)
         {
-            throw new NotImplementedException();
+            foreach(var node in this)
+            {
+                if (node.Equals(item))
+                    return true;
+            }
+            return false;
         }
 
         public void CopyTo(Array array, int index)
         {
-            throw new NotImplementedException();
+            foreach(var node in this)
+            {
+                array.SetValue(node, index++);
+            }
         }
 
         public void CopyTo(KeyValuePair<TKey, TValue>[] array, int arrayIndex)
         {
-            throw new NotImplementedException();
+            foreach (var node in this)
+            {
+                array[arrayIndex++] = node;
+            }
         }
 
-        public TValue Extract()
-        {
-            throw new NotImplementedException();
-        }
+        public TValue Extract() => Extract(out _);
 
         public TValue Extract(out TKey priority)
         {
