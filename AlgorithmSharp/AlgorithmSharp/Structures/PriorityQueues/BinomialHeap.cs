@@ -85,6 +85,16 @@ namespace AlgorithmSharp.Structures.PriorityQueues
             }
         }
 
+        public void DecreaseKey(Node node, TKey newKey)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void Delete(Node node)
+        {
+            throw new NotImplementedException();
+        }
+
         public TValue Extract() => Extract(out _);
 
         public TValue Extract(out TKey priority)
@@ -125,8 +135,17 @@ namespace AlgorithmSharp.Structures.PriorityQueues
         }
 
         void IPriorityQueue<TKey, TValue>.Insert(TKey key, TValue value) => Insert(key, value);
+
+        /// <summary>
+        /// Inserts a new pair into the priority queue.
+        /// </summary>
+        /// <param name="key">The priority of the pair</param>
+        /// <param name="value">The value of the pair. This parameter can be <c>null</c> for reference types</param>
+        /// <returns>Node object representing added object that can be used for <see cref="DecreaseKey(Node, TKey)"/> and <see cref="Delete(Node)"/> operations.</returns>
+        /// <exception cref="ArgumentNullException"><paramref name="key"/> is <c>null</c></exception>
         public Node Insert(TKey key, TValue value)
         {
+            Contract.Requires<ArgumentNullException>(key != null);
             var newNode = new Node(key, value);
             head = Meld(head, newNode);
             return newNode;
