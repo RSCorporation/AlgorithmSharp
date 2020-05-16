@@ -12,6 +12,17 @@ namespace AlgorithmSharp.Structures.PriorityQueues
     {
         public class Node
         {
+            internal Node() : this(default(TKey), default(TValue), null, null, null, 0) { }
+            internal Node(TKey key, TValue value) : this(key, value, null, null, null, 0) { }
+            internal Node(TKey key, TValue value, Node parent, Node sibling, Node child, int degree)
+            {
+                Key = key;
+                Value = value;
+                this.parent = parent;
+                this.sibling = sibling;
+                this.child = child;
+                this.degree = degree;
+            }
             public TKey Key { get; private set; }
             public TValue Value;
             internal Node parent;
@@ -116,7 +127,9 @@ namespace AlgorithmSharp.Structures.PriorityQueues
         void IPriorityQueue<TKey, TValue>.Insert(TKey key, TValue value) => Insert(key, value);
         public Node Insert(TKey key, TValue value)
         {
-            throw new NotImplementedException();
+            var newNode = new Node(key, value);
+            head = Meld(head, newNode);
+            return newNode;
         }
 
         /// <summary>
@@ -144,7 +157,7 @@ namespace AlgorithmSharp.Structures.PriorityQueues
                 return h2;
             if (h2 == null)
                 return h1;
-            var result = new Node();
+            Node result = null;
             var curH = result;
             var curH1 = h1;
             var curH2 = h2;
@@ -184,19 +197,20 @@ namespace AlgorithmSharp.Structures.PriorityQueues
                     result = curH1;
             }
             curH = result;
-            while (curH.sibling != null)
-            {
-                if (curH.degree == curH.sibling.degree)
+            if (curH != null)
+                while (curH.sibling != null)
                 {
-                    curH.parent = curH.sibling;
-                    var tmp = curH.sibling;
-                    curH.sibling = curH.sibling.child;
-                    tmp.child = curH;
-                    curH = tmp;
-                    continue;
+                    if (curH.degree == curH.sibling.degree)
+                    {
+                        curH.sibling.parent = curH;
+                        var tmp = curH.sibling.sibling;
+                        curH.sibling.sibling = curH.child;
+                        curH.child = curH.sibling;
+                        curH.sibling = tmp;
+                        curH.degree++;
+                    }
+                    curH = curH.sibling;
                 }
-                curH = curH.sibling;
-            }
             return result;
         }
 
